@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class LoginController extends Controller
+{
+    public function login()
+    {
+        return view('admin.login');
+    }
+
+    public function actionLogin(Request $request)
+    {
+        $credential = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required','min:6'],
+            ]);
+
+            // auth::Attemp: ngecek email dan password benar atau tidak
+            if(Auth::attempt($credential)){
+                $request->session()->regenerate();
+                $user = Auth::user();
+<<<<<<< HEAD
+                session(['user_id' => $user->id, 'user_name' => $user->name, 'role' => $user->role->nama_role]);
+=======
+                session(['user_id' => $user->id, 'user_name' => $user->name, 'role' => $user->id_role]);
+                // session(['user_id' => $user->id, 'user_name' => $user->name, 'role' => $user->role->nama_role]);
+>>>>>>> e2d5be3705f79791d8d0befc44c41eac7588ca73
+                return redirect()->intended('/admin/dashboard');
+            }
+
+            return back()->withErrors([
+                'email' => 'Email; atau password salah!'
+            ])->onlyInput('email');
+    }
+
+    public function logout(Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
+    }
+}
